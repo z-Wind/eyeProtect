@@ -1,3 +1,4 @@
 @echo off
+set pathVenv=D:\coding\venv\devlop\Scripts\
 cd %~dp0
-D:\coding\venv\devlop\Scripts\python.exe run.py
+%pathVenv%\python.exe run.py

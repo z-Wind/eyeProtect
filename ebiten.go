@@ -38,13 +38,20 @@ func init() {
 type Game struct {
 	counter int
 	start   time.Time
+	ch      chan<- int
 }
 
 func (g *Game) Update() error {
 	end := time.Now()
 	if end.Sub(g.start) >= time.Second {
 		g.start = end
+
 		g.counter--
+		if g.counter < 0 {
+			close(g.ch)
+		} else {
+			g.ch <- g.counter
+		}
 	}
 
 	return nil
@@ -62,11 +69,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
-func ebitenMain() {
+func ebitenMain(counter int, ch chan<- int) {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Eye Protect")
 	ebiten.SetFullscreen(true)
-	if err := ebiten.RunGame(&Game{counter: 20, start: time.Now()}); err != nil {
+	if err := ebiten.RunGame(&Game{counter: counter, start: time.Now(), ch: ch}); err != nil {
 		log.Fatal(err)
 	}
 }

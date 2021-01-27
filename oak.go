@@ -14,15 +14,12 @@ import (
 	"github.com/oakmound/oak/v2/scene"
 )
 
-var (
+type oakGame struct {
 	counter int
-	run     bool
-)
+	ch      chan<- int
+}
 
-func initFunc(prevScene string, payload interface{}) {
-	run = true
-	counter = 20
-
+func (g *oakGame) initFunc(prevScene string, payload interface{}) {
 	fg := render.FontGenerator{
 		File:    "mplus-1p-regular.ttf",
 		Color:   image.NewUniform(color.RGBA{255, 255, 255, 255}),
@@ -32,7 +29,7 @@ func initFunc(prevScene string, payload interface{}) {
 	}
 
 	font := fg.Generate()
-	text := font.NewStrText(fmt.Sprintf("眼睛休息 %02d 秒", counter), 0, 0)
+	text := font.NewStrText(fmt.Sprintf("眼睛休息 %02d 秒", g.counter), 0, 0)
 	im := text.ToSprite().Bounds()
 	x := oak.ScreenWidth/2 - im.Dx()/2
 	y := oak.ScreenHeight/2 - im.Dy()/2
@@ -47,20 +44,25 @@ func initFunc(prevScene string, payload interface{}) {
 			start = end
 			r.Undraw()
 
-			text = font.NewStrText(fmt.Sprintf("眼睛休息 %02d 秒", counter), float64(x), float64(y))
+			text = font.NewStrText(fmt.Sprintf("眼睛休息 %02d 秒", g.counter), float64(x), float64(y))
 
 			r, _ = render.Draw(text, 0)
-			if counter < 0 {
-				// restart
-				run = false
+
+			g.counter--
+			if g.counter < 0 {
+				close(g.ch)
+			} else {
+				g.ch <- g.counter
 			}
-			counter--
+
 		}
 		return 0
 	}, event.Enter)
 }
 
-func oakMain() {
+func oakMain(counter int, ch chan<- int) {
+	game := &oakGame{counter: counter, ch: ch}
+
 	oak.SetupConfig.Title = "eyeProtect"
 	oak.SetupConfig.Screen.Width = screenWidth
 	oak.SetupConfig.Screen.Height = screenHeight
@@ -68,7 +70,7 @@ func oakMain() {
 	oak.SetFullScreen(true)
 
 	if err := oak.SetFullScreen(true); err != nil {
-		fmt.Printf("%v", err)
+		fmt.Printf("%v\n", err)
 		w, h := ebiten.ScreenSizeInFullscreen()
 		oak.SetupConfig.Screen.Width = w
 		oak.SetupConfig.Screen.Height = h
@@ -76,10 +78,10 @@ func oakMain() {
 
 	oak.Add("eyeProtect",
 		// Init
-		initFunc,
+		game.initFunc,
 		// Loop
 		func() bool {
-			return run
+			return true
 		},
 
 		// End
