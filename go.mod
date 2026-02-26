@@ -1,10 +1,18 @@
 module github.com/z-Wind/eyeProtect
 
-go 1.15
+go 1.25.0
+
+require github.com/hajimehoshi/ebiten/v2 v2.9.8
 
 require (
-	github.com/hajimehoshi/ebiten v1.12.5 // indirect
-	github.com/hajimehoshi/ebiten/v2 v2.0.3
-	github.com/oakmound/oak/v2 v2.4.0
-	golang.org/x/image v0.0.0-20201208152932-35266b937fa6
+	github.com/ebitengine/gomobile v0.0.0-20260211053922-3d992dae95d1 // indirect
+	github.com/ebitengine/hideconsole v1.0.0 // indirect
+	github.com/ebitengine/purego v0.10.0 // indirect
+	github.com/go-text/typesetting v0.3.0 // indirect
+	github.com/jezek/xgb v1.3.0 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
+	golang.org/x/image v0.36.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 )

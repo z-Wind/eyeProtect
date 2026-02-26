@@ -145,5 +145,12 @@ images/
 # https
 *.pem
 
-# private
-eyeProtect
+# 忽略所有 Windows 執行檔
+*.exe
+
+# 忽略所有 Linux 執行檔 (無副檔名)
+/eyeProtect
+/daemon
+
+# 忽略日誌檔
+*.log

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-python=/home/zps/模板/venv/dev_venv/bin/python
 exeDir="`dirname \"$0\"`"
 cd $exeDir
-$python run.py
+./daemon -i 10 -w 20 -r "閉上眼睛" -t  
