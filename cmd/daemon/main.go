@@ -33,12 +33,18 @@ func main() {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	uiPath := filepath.Join(dir, exeName)
 
-	log.Printf("Daemon 啟動：每 %d 分鐘提醒一次\n", intervalMin)
+	if _, err := os.Stat(uiPath); os.IsNotExist(err) {
+		log.Fatalf("錯誤：找不到 UI 執行檔 %s，請確保它與 Daemon 放在一起", uiPath)
+	}
+
+	log.Printf("Daemon 啟動：每 %d 分鐘提醒一次，休息 %d 秒\n", intervalMin, waitSec)
 
 	for {
+		// 先休眠再執行
 		time.Sleep(time.Duration(intervalMin) * time.Minute)
 
-		// 構建指令參數
+		// 2. 構建指令參數
+		// 使用 -t=true 這種明確賦值方式在某些 flag 解析中更穩定
 		args := []string{
 			"-w", fmt.Sprintf("%d", waitSec),
 			"-r", remindText,
@@ -52,7 +58,9 @@ func main() {
 
 		// 阻塞直到 UI 關閉
 		if err := cmd.Run(); err != nil {
-			log.Printf("視窗非正常關閉: %v\n", err)
+			log.Printf("視窗關閉提示: %v\n", err)
 		}
+
+		log.Println("休息結束，進入下一個計時循環。")
 	}
 }
