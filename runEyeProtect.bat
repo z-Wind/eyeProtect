@@ -1,4 +1,4 @@
 @echo off  
 cd /d "%~dp0"  
-daemon.exe -i 10 -w 20 -r "é–‰ä¸Šçœ¼ç›" -t  
+daemon.exe -i 5 -w 20 -r "³¬¤W²´·ú" -t  
 pause 
