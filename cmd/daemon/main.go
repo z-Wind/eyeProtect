@@ -92,6 +92,9 @@ func main() {
 			return
 		case <-ticker.C:
 			triggerUI(ctx, uiPath, args)
+			// 休息結束後重置 ticker，確保下一次提醒從現在起重新計算。
+			// 若不重置，UI 顯示期間累積在 channel 的 tick 會讓下一次提前觸發。
+			ticker.Reset(time.Duration(cfg.IntervalMin) * time.Minute)
 		}
 	}
 }
